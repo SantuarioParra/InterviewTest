@@ -13,6 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/login', 'Auth\AuthController@login')->name('login');
+Route::post('signup', 'Auth\AuthController@signUp')->name('signup');
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::post('/logout', 'Auth\AuthController@logOut')->name('logout');
 });
+Route::group(['prefix' => 'auth'], function () {
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('user', 'Auth\AuthController@user')->name('auth.user');
+        Route::apiResource('/users', 'User\UserController');
+        Route::post('/users/restore/{id}', 'User\UserController@restore')->name('products.restore');
+    });
+});
+Route::middleware(['auth:api'])->group(function () {
+    Route::apiResource('/products', 'Product\ProductController');
+    Route::post('/products/restore/{id}', 'Product\ProductController@restore')->name('products.restore');
+});
+
