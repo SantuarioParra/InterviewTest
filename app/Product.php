@@ -5,10 +5,12 @@ namespace App;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use SoftDeletes;
+    use SoftDeletes, HasMediaTrait;
 
     /**
      * Using soft deletes property
@@ -24,15 +26,6 @@ class Product extends Model
         'name', 'slug', 'description','price','status',
     ];
 
-    /**
-     * Show all the products.
-     *
-     * @return LengthAwarePaginator
-     * @var array
-     */
-    public function showAll(){
-        return $this->withoutTrashed()->paginate();
-    }
 
 
 }

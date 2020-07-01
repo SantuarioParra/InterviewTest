@@ -6,8 +6,10 @@ namespace App\Services\Product;
 
 use App\Product;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ProductService
@@ -19,6 +21,20 @@ class ProductService
         $this->product = $product;
     }
 
+    /**
+     *
+     * @param $itemsPerPage
+     * @return LengthAwarePaginator
+     */
+    public function showAllProduct($itemsPerPage)
+    {
+        try {
+            return $this->product->withoutTrashed()->where('status','!=',false)->paginate($itemsPerPage);
+        } catch (Exception $exception) {
+            Log::error($exception);
+            return response()->json(['message' => trans('messages.500_INTERNAL_ERROR')], 500);
+        }
+    }
     /**
      * @param $validatedRequest
      * @return JsonResponse

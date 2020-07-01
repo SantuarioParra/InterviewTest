@@ -1,19 +1,14 @@
 <template>
     <v-app>
-        <v-navigation-drawer app>
-            <!-- -->
-        </v-navigation-drawer>
+        <!--<app-navigation-drawer></app-navigation-drawer>-->
 
-        <v-app-bar app>
-            <!-- -->
-        </v-app-bar>
+       <app-bar></app-bar>
 
         <!-- Sizes your content based upon application components -->
         <v-main>
-
             <!-- Provides the application the proper gutter -->
             <v-container fluid>
-
+                <breadcrumbs></breadcrumbs>
                 <!-- If using vue-router -->
                 <router-view></router-view>
             </v-container>
@@ -27,7 +22,8 @@
 
 <script>
     export default {
-        name: "app"
+        name: "app",
+
     }
 </script>
 

@@ -25,8 +25,7 @@ Route::group(['prefix' => 'auth'], function () {
         Route::post('/users/restore/{id}', 'User\UserController@restore')->name('products.restore');
     });
 });
-Route::middleware(['auth:api'])->group(function () {
-    Route::apiResource('/products', 'Product\ProductController');
-    Route::post('/products/restore/{id}', 'Product\ProductController@restore')->name('products.restore');
-});
+Route::apiResource('/products', 'Product\ProductController');
+Route::post('/products/restore/{id}', 'Product\ProductController@restore')->name('products.restore');
+
 

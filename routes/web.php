@@ -11,9 +11,9 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/{vue_capture?}', function () {
     return view('./layouts/app');
-});
+})->where('vue_capture', '[\/\w\.-]*');
 
 /*Auth::routes();
 

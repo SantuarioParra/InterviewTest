@@ -8,6 +8,7 @@ use App\Product;
 use App\Services\Product\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 /**
  * @method productService($validate)
@@ -34,11 +35,12 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(['products'=>$this->product->showall()]);
+        return response()->json(['products'=>$this->productService->showAllProduct($request['itemsPerPage'])]);
     }
 
     /**
