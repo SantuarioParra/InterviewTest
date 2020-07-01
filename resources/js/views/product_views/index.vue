@@ -23,38 +23,50 @@
                     </template>
                 </v-snackbar>
                 <v-card flat>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            v-show="editorMode !== true"
-                            color="blue"
-                            dark
-                            small
-                            v-on:click.prevent="editorMode = true"
+                    <v-card-actions
+
+                    >
+                        <v-row
                         >
-                            <v-icon left>mdi-plus</v-icon>
-                            add product
-                        </v-btn>
-                        <v-btn
-                            v-show="editorMode === true"
-                            color="blue"
-                            dark
-                            small
-                            v-on:click.prevent="editorMode = true"
-                        >
-                            <v-icon left>mdi-content-save-outline</v-icon>
-                            save product
-                        </v-btn>
-                        <v-btn
-                            v-show="editorMode === true"
-                            color="warning"
-                            dark
-                            small
-                            v-on:click.prevent="discardProduct"
-                        >
-                            <v-icon left>mdi-delete-empty</v-icon>
-                            discard product
-                        </v-btn>
+                            <v-col cols="12" md="3" sm="3"
+                                   v-if="editorMode !== true"
+                                   class="d-flex align-content-end"
+                            >
+                                <v-btn
+                                    color="blue"
+                                    dark
+                                    small
+                                    v-on:click.prevent="editorMode = true"
+                                >
+                                    <v-icon left>mdi-plus</v-icon>
+                                    add product
+                                </v-btn>
+                            </v-col>
+
+                            <v-col v-if="editorMode === true" cols="12" md="2" sm="2">
+                                <v-btn
+                                    color="blue"
+                                    dark
+                                    small
+                                    v-on:click.prevent="addProduct"
+                                >
+                                    <v-icon left>mdi-content-save-outline</v-icon>
+                                    save product
+                                </v-btn>
+                            </v-col>
+                            <v-col v-if="editorMode === true" cols="12" md="2" sm="2">
+                                <v-btn
+                                    color="warning"
+                                    dark
+                                    small
+                                    v-on:click.prevent="discardProduct"
+                                >
+                                    <v-icon left>mdi-delete-empty</v-icon>
+                                    discard product
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+
                     </v-card-actions>
                     <v-row v-show="editorMode">
                         <v-col cols="12" md="5" sm="5">
@@ -72,14 +84,14 @@
                                 <v-text-field
                                     v-model="newProduct.name"
                                     flat
-                                    label ="Name"
+                                    label="Name"
                                 ></v-text-field>
                             </v-card-title>
                             <v-card-subtitle class="text-subtitle-1">
                                 <v-text-field
                                     v-model="newProduct.price"
                                     flat
-                                    label ="Price"
+                                    label="Price"
                                     type="number"
                                 ></v-text-field>
                             </v-card-subtitle>
@@ -87,13 +99,18 @@
                                 <v-textarea
                                     v-model="newProduct.description"
                                     flat
-                                    label ="Description"
+                                    label="Description"
                                     auto-grow
+                                    rows="1"
                                 ></v-textarea>
+                                <v-switch
+                                    v-model="newProduct.status"
+                                    inset
+                                    :label="statusLabel"
+                                ></v-switch>
                             </v-card-text>
                         </v-col>
                     </v-row>
-
                     <v-data-iterator
                         v-show="editorMode===false"
                         :items="products"
@@ -150,6 +167,7 @@
                                                         color="blue"
                                                         dark
                                                         block
+                                                        v-on:click.prevent="addCartProduct(product)"
                                                     >
                                                         <v-icon small left>mdi-cart-plus</v-icon>
                                                         Add to cart
@@ -169,16 +187,6 @@
                                                     >
                                                         See more...
                                                     </v-btn>
-                                                    <v-btn
-                                                        text
-                                                        color="blue"
-                                                        dark
-                                                        block
-                                                        link
-                                                        v-on:click.prevent="deleteProduct(product)"
-                                                    >
-                                                        Eliminar
-                                                    </v-btn>
                                                 </v-col>
                                             </v-row>
                                         </v-card-actions>
@@ -194,7 +202,7 @@
 </template>
 <script>
     import {mapActions} from 'vuex';
-    import productServices from '../../services/Products';
+    import productServices from '../../services/products';
 
     export default {
         name: "Home",
@@ -220,16 +228,18 @@
                 /*New Product*/
                 editorMode: false,
                 newProduct: {
-                    'name':'',
-                    'slug':'',
-                    'price':0,
-                    'description':''
+                    'name': '',
+                    'slug': '',
+                    'price': 0,
+                    'description': '',
+                    'status': false,
                 },
-                defaultProduct:{
-                    'name':'',
-                    'slug':'',
-                    'price':0,
-                    'description':''
+                defaultProduct: {
+                    'name': '',
+                    'slug': '',
+                    'price': 0,
+                    'description': '',
+                    'status': false,
                 }
             }
         },
@@ -237,6 +247,7 @@
             this.getAllProducts();
         },
         methods: {
+            ...mapActions('cart',['addProduct']),
             async getAllProducts() {
                 this.loading = true;
                 const {page, itemsPerPage} = this.options;
@@ -249,37 +260,24 @@
             async addProduct() {
                 try {
                     this.loading = true;
-
+                    this.newProduct['slug'] = this.newProduct['name'];
+                    let productResponse = await productServices.saveProduct(this.newProduct);
+                    console.log(productResponse.response);
                 } catch (e) {
-                    console.log(e)
+                    console.log(e.response)
                 } finally {
+                    this.editorMode = false;
                     this.loading = false;
+                    this.getAllProducts();
                 }
             },
-            discardProduct(){
-              this.editorMode =false;
-              this.newProduct = this.defaultProduct;
+            discardProduct() {
+                this.editorMode = false;
+                this.newProduct = this.defaultProduct;
             },
-            async deleteProduct(product) {
-                if (confirm(`Are you sure about delete ${product.name}?`)) {
-                    try {
-                        let deleteResponse = await productServices.deleteProduct(product.id);
-                        if (deleteResponse.status >= 200 && deleteResponse.status < 300) {
-                            this.color = 'success'
-                        } else if (deleteResponse.status >= 300 && deleteResponse.status < 500) {
-                            this.color = 'warning'
-                        } else if (deleteResponse.status >= 500) {
-                            this.color = 'error'
-                        }
-                        this.text = deleteResponse.data.message;
-                    } catch (e) {
-                        console.log(e);
-                    } finally {
-                        this.snackbar = true;
-                        this.getAllProducts()
-                    }
-                }
-            },
+             addCartProduct(product){
+                this.$store.commit('cart/addProduct',product);
+            }
         },
         watch: {
             search() {
@@ -289,6 +287,11 @@
                 this.getAllProducts();
             },
         },
+        computed: {
+            statusLabel() {
+                return this.newProduct.status ? "Product available" : "Sold out"
+            }
+        }
     }
 </script>
 

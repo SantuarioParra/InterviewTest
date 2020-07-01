@@ -149,7 +149,7 @@
 </template>
 
 <script>
-    import productServices from '../../services/Products';
+    import productServices from '../../services/products';
 
     export default {
         props: {slug: String},

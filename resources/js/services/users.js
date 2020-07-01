@@ -1,4 +1,4 @@
-import axiosRequest from './AxiosConfig'
+import axiosRequest from './axios_config'
 
 export default {
 

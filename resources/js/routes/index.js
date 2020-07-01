@@ -8,12 +8,12 @@ export default new Router({
         {
             path: '/',
             name: 'home',
-            component: require('../views/product_views/Index').default,
+            component: require('../views/product_views/index').default,
         },
         {
             path: '/product/:slug',
             name: 'productDetail',
-            component: require('../views/product_views/Product').default,
+            component: require('../views/product_views/product').default,
             props:true
         },
         {

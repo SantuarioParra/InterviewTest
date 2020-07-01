@@ -40,7 +40,7 @@ class ProductRequest extends FormRequest
                         'slug' => ['required','string',Rule::unique('products','slug')],
                         'description' => ['filled','string'],
                         'price'=> ['numeric','required'],
-                        'status'=> ['boolean','required']
+                        'status'=> ['boolean']
                     ];
                 }
             case 'PUT':
@@ -51,7 +51,7 @@ class ProductRequest extends FormRequest
                         'slug' => ['required','string',Rule::unique('products','slug')->ignore($this->product)],
                         'description' => ['filled','string'],
                         'price'=> ['numeric','required'],
-                        'status'=> ['boolean','required']
+                        'status'=> ['boolean']
                     ];
                 }
             default:

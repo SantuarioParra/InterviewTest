@@ -29,7 +29,7 @@ class ProductService
     public function showAllProduct($itemsPerPage)
     {
         try {
-            return $this->product->withoutTrashed()->where('status','!=',false)->paginate($itemsPerPage);
+            return $this->product->withoutTrashed()->where('status','!=',false)->latest()->paginate($itemsPerPage);
         } catch (Exception $exception) {
             Log::error($exception);
             return response()->json(['message' => trans('messages.500_INTERNAL_ERROR')], 500);

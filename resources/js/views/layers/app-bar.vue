@@ -34,10 +34,9 @@
                 small
                 class="d-flex d-sm-none"
             >
-                <v-icon >mdi-login-variant</v-icon>
+                <v-icon>mdi-login-variant</v-icon>
             </v-btn>
-
-
+            <app-cart></app-cart>
         </v-toolbar-items>
     </v-app-bar>
 </template>

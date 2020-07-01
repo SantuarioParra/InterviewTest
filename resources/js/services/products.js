@@ -1,5 +1,5 @@
-import axiosRequest from './AxiosConfig';
-import axiosMultipartRequest from './AxiosMultipartConfig';
+import axiosRequest from './axios_config';
+import axiosMultipartRequest from './axios_multipart_config';
 
 export default {
 
@@ -12,11 +12,11 @@ export default {
     },
 
     saveProduct(data) {
-        return axiosMultipartRequest().post('/api/products', data)
+        return axiosRequest().post('/api/products', data)
     },
 
     updateProduct(data, id) {
-        return axiosMultipartRequest().put(`/api/products/${id}`, data)
+        return axiosRequest().put(`/api/products/${id}`, data)
     },
 
     deleteProduct(id) {
