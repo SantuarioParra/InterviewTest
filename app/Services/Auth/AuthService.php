@@ -8,8 +8,10 @@ use App\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\StreamInterface;
+use function Psy\debug;
 
 class AuthService
 {
@@ -56,21 +58,43 @@ class AuthService
 
     public function logIn($validatedRequest)
     {
+        /*try {
+
+            $username = $validatedRequest['email'];
+            $password = $validatedRequest['password'];
+            Auth::attempt(['email' => $username, 'password' => $password]);
+
+            if (Auth::check()) {
+                $this->user = Auth::user();
+                $success['token'] = $this->user->createToken('InterviewTest')->accessToken;
+                $success['user'] = Auth::user();
+                return response()->json(['success' => $success], 200);
+            } else {
+                return response()->json(['error' => 'Wrong username/password combination.'], 401);
+            }
+        } catch (Exception $exception) {
+            Log::error($exception);
+            return response()->json(['message' => trans('messages.500_INTERNAL_ERROR')], 500);
+        }*/
         try {
-            $response = $this->http->post(config('services.passport.login_endpoint'), [
+            $http = new Client();
+            $response = $http->post(config('services.passport.login_endpoint'), [
                 'form_params' => [
                     'grant_type' => 'password',
                     'client_id' => config('services.passport.client_id'),
                     'client_secret' => config('services.passport.client_secret'),
                     'username' => $validatedRequest['email'],
-                    'password' => $validatedRequest['password'],
-                ]
+                    'password' =>$validatedRequest['password'],
+                    'scope'=>'*'
+                ],
+
             ]);
+
             return $response->getBody();
         } catch (BadResponseException $exception) {
             switch ($exception->getCode()) {
                 case 400:
-                    return response()->json(['message' => trans('messages.400_LOG_IN_USER')], 400);
+                    return response()->json(['message' => trans('messages.400_LOG_IN_USER') . $exception], 400);
                     break;
                 case 401:
                     return response()->json(['message' => trans('messages.401_UNAUTHORIZED_USER')], 401);

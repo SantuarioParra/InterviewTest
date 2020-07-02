@@ -3,13 +3,14 @@ import axiosRequest from './axios_config';
 export default {
     login(credentials) {
         return new Promise((resolve, reject) => {
-            axiosRequest().post('/api/users/login', {
+            axiosRequest().post('/api/login', {
                 email: credentials.email,
                 password: credentials.password,
             })
                 .then(response => {
-                    const token = response.data.success.token;
-                    localStorage.setItem('access_token', token);
+                    console.log(response);
+                    const token = response.data.access_token;
+                    localStorage.setItem('access_token', token)
                     resolve(token)
                 })
                 .catch(error => {

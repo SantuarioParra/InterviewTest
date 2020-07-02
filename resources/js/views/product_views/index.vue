@@ -248,6 +248,7 @@
         },
         methods: {
             ...mapActions('cart',['addProduct']),
+            ...mapActions('products',['updateProducts']),
             async getAllProducts() {
                 this.loading = true;
                 const {page, itemsPerPage} = this.options;
@@ -255,6 +256,7 @@
                 this.products = productsResponse.data.products.data;
                 this.pagination.total = productsResponse.data.products;
                 this.pagination.totalProducts = productsResponse.data.products.total;
+                this.$store.dispatch('products/updateProducts',this.products);
                 this.loading = false;
             },
             async addProduct() {

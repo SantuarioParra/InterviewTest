@@ -11,6 +11,16 @@ export default new Router({
             component: require('../views/product_views/index').default,
         },
         {
+            path:'/login',
+            name:'login',
+            component:require('../views/user_views/login').default,
+        },
+        {
+            path:'/signup',
+            name:'signup',
+            component:require('../views/user_views/signup').default,
+        },
+        {
             path: '/product/:slug',
             name: 'productDetail',
             component: require('../views/product_views/product').default,
@@ -22,5 +32,6 @@ export default new Router({
             props:true
         }
     ],
-    mode: 'history'
+    mode: 'history',
 })
+
