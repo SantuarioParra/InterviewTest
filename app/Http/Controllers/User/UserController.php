@@ -24,11 +24,12 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-       return $this->user->showAllUsers();
+        return response()->json(['users'=>$this->userService->getAllUsers($request['itemsPerPage'])]);
     }
 
     /**

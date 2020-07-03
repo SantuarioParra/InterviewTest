@@ -93,6 +93,7 @@
 <script>
     import authService from '../../services/auth';
     import {mapActions} from 'vuex';
+
     export default {
         name: "login",
         data() {
@@ -105,14 +106,16 @@
             }
         },
         methods: {
-            ...mapActions('auth',['saveToken']),
+            ...mapActions('auth', ['saveToken','refresh']),
             login() {
-                authService.login(this.credentials).then(response=>{
-                    this.$store.dispatch('auth/saveToken',response)
-                }).catch(error=>{
+                authService.login(this.credentials).then(response => {
+                    this.$store.dispatch('auth/saveToken', response);
+
+                }).catch(error => {
                     console.log(error.response);
-                }).finally(()=>{
-                    this.$router.push({name:'home'})
+                }).finally(() => {
+                    this.$router.push({name: 'home'});
+                    this.$store.dispatch('auth/refresh');
                 });
 
             }

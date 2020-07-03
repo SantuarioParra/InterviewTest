@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Role;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,7 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-class UserRequest extends FormRequest
+class RoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,32 +30,24 @@ class UserRequest extends FormRequest
         switch ($this->method()) {
             case 'GET':
             case 'DELETE':
-                {
-                    return [];
-                }
+                return [];
+                break;
             case 'POST':
-                {
-                    return [
-                        'name' => ['required', 'max:50', 'string', Rule::unique('users', 'name')],
-                        'email' => ['required', 'email:dns', Rule::unique('users', 'email')],
-                        'role' => ['required','string'],
-                        'password' => ['required', 'min:8', 'confirmed'],
-                    ];
-                }
+                return [
+                    'name' => ['required', 'max:50', 'string', Rule::unique('roles', 'name')],
+                    'guard_name' => ['required', 'string'],
+                ];
+                break;
             case 'PUT':
             case 'PATCH':
-                {
-                    return [
-                        'name' => ['required', 'max:50', 'string', Rule::unique('users', 'name')->ignore($this->user, 'id')],
-                        'email' => ['required', 'email', 'string', Rule::unique('users', 'email')->ignore($this->user, 'id')],
-                        'role' => ['required','string'],
-                        'password' => 'required|min:8|confirmed',
-                    ];
-                }
+                return [
+                    'name' => ['required', 'max:50', 'string', Rule::unique('roles', 'name')->ignore($this->role)],
+                    'guard_name' => ['required', 'string'],
+                ];
+                break;
             default:
-                {
-                    break;
-                }
+                break;
+
         }
     }
 

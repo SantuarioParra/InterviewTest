@@ -4,6 +4,8 @@ import axios from 'axios'
 
 Vue.use(Vuex);
 import products from './modules/products';
+import users from './modules/users';
+import roles from './modules/roles';
 import cart from './modules/cart';
 import auth from './modules/auth'
 
@@ -13,7 +15,9 @@ export default new Vuex.Store({
     modules: {
         products,
         cart,
-        auth
+        auth,
+        users,
+        roles
     },
     /*strict: debug,*/
 })

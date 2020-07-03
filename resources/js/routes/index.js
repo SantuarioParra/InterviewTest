@@ -27,6 +27,11 @@ export default new Router({
             props:true
         },
         {
+            path:'/users',
+            name:'users',
+            component:require('../views/user_views/users').default,
+        },
+        {
             path: '*',
             component: require('../views/error_views/error_404').default,
             props:true

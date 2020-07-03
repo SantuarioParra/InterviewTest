@@ -2,8 +2,8 @@ import axiosRequest from './axios_config'
 
 export default {
 
-    getUsers(page) {
-        return axiosRequest().get(`/api/auth/users?page=${page}`)
+    getUsers(page,itemsPerPage) {
+        return axiosRequest().get(`/api/auth/users?page=${page}&itemsPerPage=${itemsPerPage}`)
     },
 
     getUser(id) {
@@ -15,7 +15,7 @@ export default {
     },
 
     updateUser(data, id) {
-        return axiosRequest().put(`/api/auth/users/${id}`, data)
+        return axiosRequest().patch(`/api/auth/users/${id}`, data)
     },
 
     deleteUser(id) {
@@ -23,6 +23,6 @@ export default {
     },
 
     restoreUser(id) {
-        return axiosRequest().delete(`/api/auth/users/restore/${id}`)
+        return axiosRequest().post(`/api/auth/users/restore/${id}`)
     }
 }

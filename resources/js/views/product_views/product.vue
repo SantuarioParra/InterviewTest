@@ -30,9 +30,10 @@
                 flat
                 v-else
             >
-                <v-card-actions class="pb-0">
+                <v-card-actions
+                    v-if="isAdmin"
+                    class="pb-0">
                     <v-spacer></v-spacer>
-
                     <v-btn
                         v-if="editorMode===false"
                         text
@@ -85,7 +86,7 @@
                         <v-card-text class="text-justify">
                             {{product.description}}
                         </v-card-text>
-                        <v-card-actions class="pb-0">
+                        <v-card-actions v-if="!isAdmin" class="pb-0">
                             <v-row fluid>
                                 <v-col class="pt-0 pb-0" cols="12">
                                     <v-row class="pt-0 pb-0" fluid>
@@ -150,6 +151,7 @@
 
 <script>
     import productServices from '../../services/products';
+    import {mapGetters} from "vuex";
 
     export default {
         props: {slug: String},
@@ -187,6 +189,12 @@
                     this.editorMode=false;
                     this.loading =false;
                 }
+            }
+        },
+        computed:{
+          ...mapGetters('auth',['isAdmin']),
+            isAdmin(){
+              return this.$store.getters['auth/isAdmin']
             }
         },
         mounted() {

@@ -20,9 +20,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 Route::group(['prefix' => 'auth'], function () {
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('user', 'Auth\AuthController@user')->name('auth.user');
+        Route::get('/user', 'Auth\AuthController@user')->name('auth.user');
         Route::apiResource('/users', 'User\UserController');
         Route::post('/users/restore/{id}', 'User\UserController@restore')->name('products.restore');
+        Route::apiResource('/roles', 'Role\RoleController');
     });
 });
 Route::apiResource('/products', 'Product\ProductController');

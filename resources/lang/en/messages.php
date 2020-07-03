@@ -24,6 +24,18 @@ return [
     '201_CREATE_USER' => 'The user has been created successfully.',
     '400_CREATE_USER' => 'The user has not been created.',
     '404_NOT_FOUND_USER' => 'Ups!! The requested user could not be found.',
+    '200_SYNC_ROLE' => 'The role has been attached successfully.',
+    '400_SYNC_ROLE' => 'The role has not been attached.',
+
+    '200_DELETE_ROLE' => 'The role has been removed successfully.',
+    '400_DELETE_ROLE' => 'The role has not been removed.',
+    '200_UPDATE_ROLE' => 'The role has been updated successfully.',
+    '400_UPDATE_ROLE' => 'The role has not been updated.',
+    '200_RESTORE_ROLE' => 'The role has been restored successfully.',
+    '400_RESTORE_ROLE' => 'The role has not been restored.',
+    '201_CREATE_ROLE' => 'The role has been created successfully.',
+    '400_CREATE_ROLE' => 'The role has not been created.',
+    '404_NOT_FOUND_ROLE' => 'Ups!! The requested role could not be found.',
 
     '200_DELETE_PRODUCT' => 'The product has been removed successfully.',
     '400_DELETE_PRODUCT' => 'The product has not been removed successfully.',

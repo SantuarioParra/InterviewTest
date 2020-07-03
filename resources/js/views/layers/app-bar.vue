@@ -13,6 +13,17 @@
 
         <v-toolbar-items>
             <v-btn
+                v-if="isLogged && isAdmin"
+                text
+                text-color="white"
+                small
+                :to="{name:'users'}"
+            >
+                users
+            </v-btn>
+
+            <v-btn
+                v-if="!isLogged"
                 text
                 text-color="white"
                 small
@@ -22,6 +33,7 @@
                 login
             </v-btn>
             <v-btn
+                v-if="!isLogged"
                 text
                 text-color="white"
                 small
@@ -31,6 +43,7 @@
                 Sign up
             </v-btn>
             <v-btn
+                v-if="isLogged"
                 text
                 text-color="white"
                 small
@@ -40,21 +53,33 @@
                 Log out
             </v-btn>
             <v-btn
+                v-if="!isLogged"
+                icon
+                text-color="white"
+                small
+                class="d-flex d-sm-none"
+                :to="{name:'login'}"
+            >
+                <v-icon>mdi-login-variant</v-icon>
+            </v-btn>
+            <v-btn
+                v-if="isLogged"
                 icon
                 text-color="white"
                 small
                 class="d-flex d-sm-none"
             >
-                <v-icon>mdi-login-variant</v-icon>
+                <v-icon>mdi-logout-variant</v-icon>
             </v-btn>
-            <app-cart></app-cart>
+            <app-cart v-if="!isAdmin"></app-cart>
         </v-toolbar-items>
     </v-app-bar>
 </template>
 
 <script>
-    import authService from'../../services/auth'
-    import {mapActions} from 'vuex'
+    import authService from '../../services/auth'
+    import {mapActions,mapGetters} from 'vuex'
+
     export default {
         name: "app-bar",
         data() {
@@ -63,16 +88,25 @@
                 search: ''
             }
         },
-        methods:{
-            ...mapActions('auth',['destroyToken']),
-            logOut(){
-                authService.logout().then(response=>{
+        methods: {
+            ...mapActions('auth', ['destroyToken']),
+            logOut() {
+                authService.logout().then(response => {
                     this.$store.dispatch('auth/destroyToken')
-                }).catch(error=>{
+                }).catch(error => {
                     console.log(error)
-                }).finally(()=>{
-                    this.$router.push({name:'login'})
+                }).finally(() => {
+                    this.$router.push({name: 'login'})
                 })
+            }
+        },
+        computed:{
+            ...mapGetters('auth',['isLogged','isAdmin']),
+            isLogged(){
+                return this.$store.getters['auth/isLogged'];
+            },
+            isAdmin(){
+                return this.$store.getters['auth/isAdmin'];
             }
         }
     }

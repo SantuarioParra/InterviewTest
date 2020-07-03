@@ -2,7 +2,7 @@
     <v-app>
         <!--<app-navigation-drawer></app-navigation-drawer>-->
 
-       <app-bar></app-bar>
+        <app-bar></app-bar>
 
         <!-- Sizes your content based upon application components -->
         <v-main>
@@ -23,6 +23,7 @@
 <script>
     export default {
         name: "app",
+
 
     }
 </script>

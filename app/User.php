@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable, SoftDeletes, SoftCascadeTrait, HasApiTokens;
+    use Notifiable, SoftDeletes, SoftCascadeTrait, HasApiTokens, HasRoles;
 
+    protected $guard_name = 'api';
     /**
      * Using soft deletes property
      */
@@ -45,7 +47,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function showAllUsers(){
-        return $this->paginate();
-    }
 }

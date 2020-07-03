@@ -112,7 +112,7 @@ class AuthService
     public function logOut()
     {
         try {
-            auth()->user()->tokens->each(function ($token, $key) {
+            auth()->user()->tokens->each(function ($token) {
                 $token->delete();
             });
             return response()->json(['message' => trans('messages.200_LOG_OUT_USER')], 200);
@@ -129,6 +129,7 @@ class AuthService
     {
         try {
             $user = auth()->user();
+            $user->roles;
             return response()->json(['user' => $user], 200);
         } catch (Exception $exception) {
             Log::error($exception);

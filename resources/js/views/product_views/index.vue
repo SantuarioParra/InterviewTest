@@ -27,6 +27,7 @@
 
                     >
                         <v-row
+                            v-if="isAdmin"
                         >
                             <v-col cols="12" md="3" sm="3"
                                    v-if="editorMode !== true"
@@ -160,6 +161,7 @@
                                             <v-row
                                             >
                                                 <v-col
+                                                    v-if="!isAdmin"
                                                     cols="12"
                                                     class="pt-0"
                                                 >
@@ -201,7 +203,7 @@
     </v-container>
 </template>
 <script>
-    import {mapActions} from 'vuex';
+    import {mapActions, mapGetters} from 'vuex';
     import productServices from '../../services/products';
 
     export default {
@@ -282,16 +284,17 @@
             }
         },
         watch: {
-            search() {
-                this.getAllProducts();
-            },
             options() {
                 this.getAllProducts();
             },
         },
         computed: {
+            ...mapGetters('auth',['isAdmin']),
             statusLabel() {
                 return this.newProduct.status ? "Product available" : "Sold out"
+            },
+            isAdmin(){
+                return this.$store.getters['auth/isAdmin']
             }
         }
     }
