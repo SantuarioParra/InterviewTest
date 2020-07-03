@@ -24,6 +24,9 @@
                                                 v-model="credentials.name"
                                                 label="Name"
                                                 clearable
+                                                :error-messages="nameErrors"
+                                                @blur="$v.credentials.name.$touch()"
+                                                @input="$v.credentials.name.$touch()"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="12">
@@ -32,6 +35,9 @@
                                                 label="Email"
                                                 prepend-inner-icon="mdi-email"
                                                 clearable
+                                                :error-messages="emailErrors"
+                                                @blur="$v.credentials.email.$touch()"
+                                                @input="$v.credentials.email.$touch()"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="12">
@@ -43,6 +49,9 @@
                                                 :type="showPassword ? 'text' : 'password'"
                                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                                 @click:append="showPassword = !showPassword"
+                                                :error-messages="passwordErrors"
+                                                @blur="$v.credentials.password.$touch()"
+                                                @input="$v.credentials.password.$touch()"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="12">
@@ -54,6 +63,9 @@
                                                 :type="showPassword ? 'text' : 'password'"
                                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                                 @click:append="showPassword = !showPassword"
+                                                :error-messages="passwordConfirmationErrors"
+                                                @blur="$v.credentials.password_confirmation.$touch()"
+                                                @input="$v.credentials.password_confirmation.$touch()"
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
@@ -109,6 +121,7 @@
 
 <script>
     import authService from '../../services/auth';
+    import {required,email,minLength,maxLength,sameAs} from "vuelidate/lib/validators";
     import {mapActions} from 'vuex';
     export default {
         name: "signup",
@@ -122,6 +135,46 @@
                     'password_confirmation':''
                 }
             }
+        },
+        validations:{
+            credentials:{
+                name: {required, minLength: minLength(1), maxLength: maxLength(50)},
+                email: {required, email},
+                password: {required, minLength: minLength(8)},
+                password_confirmation: {required, sameAsPassword: sameAs('password')},
+
+            }
+        },
+        computed:{
+            nameErrors() {
+                const errors = [];
+                if (!this.$v.credentials.name.$dirty) return errors;
+                !this.$v.credentials.name.required && errors.push('Name is required');
+                !this.$v.credentials.name.maxLength && errors.push('Name is too long. Max:50 characters.');
+                !this.$v.credentials.name.minLength && errors.push('Name is too short. Min:1 characters.');
+                return errors
+            },
+            emailErrors() {
+                const errors = [];
+                if (!this.$v.credentials.email.$dirty) return errors;
+                !this.$v.credentials.email.required && errors.push('Email is required.');
+                !this.$v.credentials.email.email && errors.push('Invalid email given.');
+                return errors
+            },
+            passwordErrors() {
+                const errors = [];
+                if (!this.$v.credentials.password.$dirty) return errors;
+                !this.$v.credentials.password.required && errors.push('Password is required');
+                !this.$v.credentials.password.minLength && errors.push('Password length is too short, min:8 characters.');
+                return errors
+            },
+            passwordConfirmationErrors() {
+                const errors = [];
+                if (!this.$v.credentials.password_confirmation.$dirty) return errors;
+                !this.$v.credentials.password_confirmation.required && errors.push('Password confirmation is required');
+                !this.$v.credentials.password_confirmation.sameAsPassword && errors.push('The password confirmation does not match.');
+                return errors
+            },
         },
         methods:{
             ...mapActions('auth',['saveToken']),

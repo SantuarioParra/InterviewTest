@@ -1,5 +1,6 @@
 <template>
     <v-container fluid>
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
             <v-col>
                 <v-snackbar
@@ -160,6 +161,18 @@
                                         <v-card-actions>
                                             <v-row
                                             >
+                                                <v-col class="pt-0 pb-0" offset-md="3" offset-sm="3" sm="5" md="5">
+                                                    <v-text-field
+                                                        v-model="product.quantity"
+                                                        label="Quantity"
+                                                        type="number"
+                                                        min="1"
+                                                        max="10"
+                                                        solo
+                                                        rounded
+                                                        dense
+                                                    ></v-text-field>
+                                                </v-col>
                                                 <v-col
                                                     v-if="!isAdmin"
                                                     cols="12"
@@ -204,6 +217,7 @@
 </template>
 <script>
     import {mapActions, mapGetters} from 'vuex';
+    import {required} from 'vuelidate'
     import productServices from '../../services/products';
 
     export default {
@@ -242,15 +256,18 @@
                     'price': 0,
                     'description': '',
                     'status': false,
-                }
+                },
+                breadcrumbs: [
+                    {text: 'Products', disable: false, to: {name: 'home'}, exact:true},
+                ]
             }
         },
         mounted() {
             this.getAllProducts();
         },
         methods: {
-            ...mapActions('cart',['addProduct']),
-            ...mapActions('products',['updateProducts']),
+            ...mapActions('cart', ['addProduct']),
+            ...mapActions('products', ['updateProducts']),
             async getAllProducts() {
                 this.loading = true;
                 const {page, itemsPerPage} = this.options;
@@ -258,7 +275,7 @@
                 this.products = productsResponse.data.products.data;
                 this.pagination.total = productsResponse.data.products;
                 this.pagination.totalProducts = productsResponse.data.products.total;
-                this.$store.dispatch('products/updateProducts',this.products);
+                this.$store.dispatch('products/updateProducts', this.products);
                 this.loading = false;
             },
             async addProduct() {
@@ -279,8 +296,8 @@
                 this.editorMode = false;
                 this.newProduct = this.defaultProduct;
             },
-             addCartProduct(product){
-                this.$store.commit('cart/addProduct',product);
+            addCartProduct(product) {
+                this.$store.commit('cart/addProduct', product);
             }
         },
         watch: {
@@ -289,13 +306,13 @@
             },
         },
         computed: {
-            ...mapGetters('auth',['isAdmin']),
+            ...mapGetters('auth', ['isAdmin']),
             statusLabel() {
                 return this.newProduct.status ? "Product available" : "Sold out"
             },
-            isAdmin(){
+            isAdmin() {
                 return this.$store.getters['auth/isAdmin']
-            }
+            },
         }
     }
 </script>

@@ -25,6 +25,9 @@
                                                 label="Email"
                                                 prepend-inner-icon="mdi-email"
                                                 clearable
+                                                :error-messages="emailErrors"
+                                                @blur="$v.credentials.email.$touch()"
+                                                @input="$v.credentials.email.$touch()"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="12">
@@ -36,6 +39,9 @@
                                                 :type="showPassword ? 'text' : 'password'"
                                                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                                 @click:append="showPassword = !showPassword"
+                                                :error-messages="passwordErrors"
+                                                @blur="$v.credentials.password.$touch()"
+                                                @input="$v.credentials.password.$touch()"
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
@@ -93,6 +99,7 @@
 <script>
     import authService from '../../services/auth';
     import {mapActions} from 'vuex';
+    import {required,email,minLength} from "vuelidate/lib/validators";
 
     export default {
         name: "login",
@@ -104,6 +111,28 @@
                     'password': '',
                 }
             }
+        },
+        validations:{
+            credentials:{
+                email:{required,email},
+                password:{required,minLength:minLength(8)}
+            }
+        },
+        computed:{
+            emailErrors() {
+                const errors = [];
+                if (!this.$v.credentials.email.$dirty) return errors;
+                !this.$v.credentials.email.required && errors.push('Email is required.');
+                !this.$v.credentials.email.email && errors.push('Invalid email given.');
+                return errors
+            },
+            passwordErrors() {
+                const errors = [];
+                if (!this.$v.credentials.password.$dirty) return errors;
+                !this.$v.credentials.password.required && errors.push('Password is required');
+                !this.$v.credentials.password.minLength && errors.push('Password length is too short, min:8 characters.');
+                return errors
+            },
         },
         methods: {
             ...mapActions('auth', ['saveToken','refresh']),

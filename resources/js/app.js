@@ -41,9 +41,19 @@ import store from './store'
 /**
  * Vue-route import
  */
-
 import router from './routes/index'
 
+/**
+ * v-mask
+ */
+import VueTheMask from 'vue-the-mask'
+Vue.use(VueTheMask);
+
+/***
+ * Vuelidate
+ */
+import Vuelidate from 'vuelidate';
+Vue.use(Vuelidate);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

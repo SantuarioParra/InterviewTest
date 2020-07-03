@@ -1,6 +1,7 @@
 <template>
     <v-row fluid>
         <v-col cols="12">
+            <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
             <v-card
                 flat
                 v-if="loading"
@@ -92,6 +93,7 @@
                                     <v-row class="pt-0 pb-0" fluid>
                                         <v-col class="pt-0 pb-0" offset-md="4" offset-sm="4" sm="3" md="3">
                                             <v-text-field
+                                                v-model="product.quantity"
                                                 label="Quantity"
                                                 type="number"
                                                 min="1"
@@ -110,6 +112,7 @@
                                         color="blue"
                                         dark
                                         block
+                                        v-on:click="addCartProduct(product)"
                                     >
                                         <v-icon left small>mdi-cart-plus</v-icon>
                                         Add to cart
@@ -124,6 +127,9 @@
                                 v-model="product.name"
                                 flat
                                 label ="Name"
+                                :error-messages="nameErrors"
+                                @blur="$v.product.name.$touch()"
+                                @input="$v.product.name.$touch()"
                             ></v-text-field>
                         </v-card-title>
                         <v-card-subtitle class="text-subtitle-1">
@@ -132,6 +138,9 @@
                                 flat
                                 label ="Price"
                                 type="number"
+                                :error-messages="priceErrors"
+                                @blur="$v.product.price.$touch()"
+                                @input="$v.product.price.$touch()"
                             ></v-text-field>
                         </v-card-subtitle>
                         <v-card-text class="text-justify">
@@ -140,6 +149,9 @@
                                 flat
                                 label ="Description"
                                 auto-grow
+                                :error-messages="descriptionErrors"
+                                @blur="$v.product.description.$touch()"
+                                @input="$v.product.description.$touch()"
                             ></v-textarea>
                         </v-card-text>
                     </v-col>
@@ -151,22 +163,41 @@
 
 <script>
     import productServices from '../../services/products';
-    import {mapGetters} from "vuex";
-
+    import {mapActions, mapGetters} from "vuex";
+    import {required,numeric,decimal} from "vuelidate/lib/validators";
     export default {
         props: {slug: String},
         name: "Product",
         data() {
             return {
+                breadcrumbs: [
+                    {text: 'Products', disable: false, to: {name: 'home'}, exact:true},
+                    {text: 'Product Detail', disable: false, to: {name: 'productDetail',params:{slug:this.slug}}, exact:true}
+                ],
                 /*skeleton loader*/
                 loading: false,
                 /*product*/
-                product: {},
+                product: {
+                    name:'',
+                    price:0,
+                    description:''
+                },
                 /*Edit*/
                 editorMode: false
             }
         },
+        validations:{
+            product:{
+                name:{required},
+                price:{required,decimal},
+                description:{required}
+            }
+        },
         methods: {
+            ...mapActions('cart',['addProduct']),
+            addCartProduct(product){
+                this.$store.commit('cart/addProduct',product);
+            },
             async getProduct() {
                 try {
                     this.loading = true;
@@ -189,13 +220,34 @@
                     this.editorMode=false;
                     this.loading =false;
                 }
-            }
+            },
+
         },
         computed:{
           ...mapGetters('auth',['isAdmin']),
             isAdmin(){
               return this.$store.getters['auth/isAdmin']
-            }
+            },
+            nameErrors() {
+                const errors = [];
+                if (!this.$v.product.name.$dirty) return errors;
+                !this.$v.product.name.required && errors.push('Product name is required.');
+                return errors
+            },
+            priceErrors() {
+                const errors = [];
+                if (!this.$v.product.price.$dirty) return errors;
+                !this.$v.product.price.required && errors.push('Product price is required.');
+                !this.$v.product.price.decimal && errors.push('Invalid price format.');
+                return errors
+            },
+            descriptionErrors() {
+                const errors = [];
+                if (!this.$v.product.description.$dirty) return errors;
+                !this.$v.product.description.required && errors.push('Description is required.');
+                return errors
+            },
+
         },
         mounted() {
             this.getProduct();

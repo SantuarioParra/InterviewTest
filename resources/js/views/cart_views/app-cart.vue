@@ -27,7 +27,7 @@
                 :key="product.id"
             >
                 <v-list-item-avatar
-                tile
+                    tile
                 >
                     <v-avatar
                         tile
@@ -38,7 +38,10 @@
                         </v-img>
                     </v-avatar>
                 </v-list-item-avatar>
-                <v-list-item-title>{{ product.name }}</v-list-item-title>
+                <v-list-item-content>
+                    <v-list-item-title>{{ product.name }}</v-list-item-title>
+                    <v-list-item-subtitle v-text="`Quantity: ${product.quantity}`"></v-list-item-subtitle>
+                </v-list-item-content>
                 <v-list-item-action>
                     <v-btn
                         icon
@@ -50,7 +53,20 @@
                     </v-btn>
                 </v-list-item-action>
             </v-list-item>
+            <v-list-item
+            v-if="totalProducts!==0"
+            >
+                <v-btn
+                    small
+                    color="blue"
+                    dark
+                    :to="{name:'checkOut'}"
+                >
+                    check Out
+                </v-btn>
+            </v-list-item>
         </v-list>
+
     </v-menu>
 </template>
 
@@ -64,12 +80,12 @@
         },
         methods: {
             ...mapActions('cart', ['deleteProduct']),
-            deleteCartProduct(product){
-                this.$store.commit('cart/deleteProduct',product)
+            deleteCartProduct(product) {
+                this.$store.commit('cart/deleteProduct', product)
             }
         },
         computed: {
-            ...mapGetters('cart', ['getAllProducts','getProductsQuantity']),
+            ...mapGetters('cart', ['getAllProducts', 'getProductsQuantity']),
             products() {
                 return this.$store.getters['cart/getAllProducts']
             },

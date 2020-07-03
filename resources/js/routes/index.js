@@ -32,6 +32,11 @@ export default new Router({
             component:require('../views/user_views/users').default,
         },
         {
+            path:'/checkOut',
+            name:'checkOut',
+            component:require('../views/cart_views/cart-check-out').default,
+        },
+        {
             path: '*',
             component: require('../views/error_views/error_404').default,
             props:true

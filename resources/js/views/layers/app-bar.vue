@@ -5,9 +5,7 @@
         color="grey darken-4"
         dark
     >
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-        <v-toolbar-title class="d-none d-sm-flex">Interview test e-commerce</v-toolbar-title>
+        <v-toolbar-title class="d-none d-sm-flex" v-on:click.prevent="sendHome">Interview test e-commerce</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -98,6 +96,9 @@
                 }).finally(() => {
                     this.$router.push({name: 'login'})
                 })
+            },
+            sendHome(){
+                this.$router.push({name:'home'})
             }
         },
         computed:{

@@ -1,5 +1,6 @@
 <template>
     <v-container fluid>
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
         <v-row>
             <v-col cols="12">
                 <v-card v-if="editorMode===false" flat>
@@ -74,6 +75,9 @@
                                     v-model="editedUser.name"
                                     label="Name"
                                     clearable
+                                    :error-messages="nameErrors"
+                                    @blur="$v.editedUser.name.$touch()"
+                                    @input="$v.editedUser.name.$touch()"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12">
@@ -82,6 +86,9 @@
                                     label="Email"
                                     prepend-inner-icon="mdi-email"
                                     clearable
+                                    :error-messages="emailErrors"
+                                    @blur="$v.editedUser.email.$touch()"
+                                    @input="$v.editedUser.email.$touch()"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12">
@@ -93,6 +100,9 @@
                                     :type="showPassword ? 'text' : 'password'"
                                     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                     @click:append="showPassword = !showPassword"
+                                    :error-messages="passwordErrors"
+                                    @blur="$v.editedUser.password.$touch()"
+                                    @input="$v.editedUser.password.$touch()"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12">
@@ -104,6 +114,9 @@
                                     :type="showPassword ? 'text' : 'password'"
                                     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                     @click:append="showPassword = !showPassword"
+                                    :error-messages="passwordConfirmationErrors"
+                                    @blur="$v.editedUser.password_confirmation.$touch()"
+                                    @input="$v.editedUser.password_confirmation.$touch()"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12">
@@ -118,6 +131,9 @@
                                     :search-input.sync="new_role.name"
                                     v-on:keyup.enter="add_new_role(new_role)"
                                     clearable
+                                    :error-messages="roleErrors"
+                                    @blur="$v.editedUser.role.$touch()"
+                                    @input="$v.editedUser.role.$touch()"
                                 ></v-autocomplete>
                             </v-col>
                         </v-row>
@@ -173,12 +189,16 @@
 <script>
     import usersService from '../../services/users';
     import roleServices from '../../services/roles';
+    import {required,email,minLength,maxLength,sameAs} from "vuelidate/lib/validators";
     import {mapActions} from "vuex";
 
     export default {
         name: "users",
         data() {
             return {
+                breadcrumbs: [
+                    {text: 'Users', disable: false, to: {name: 'users'}, exact:true},
+                ],
                 newUser: false,
                 loading: false,
                 /*Table config*/
@@ -222,6 +242,52 @@
                     guard_name: 'api'
                 }
             }
+        },
+        validations:{
+            editedUser:{
+                name: {required, minLength: minLength(1), maxLength: maxLength(50)},
+                email: {required, email},
+                password: {required, minLength: minLength(8)},
+                password_confirmation: {required, sameAsPassword: sameAs('password')},
+                role: {required}
+            }
+        },
+        computed:{
+            nameErrors() {
+                const errors = [];
+                if (!this.$v.editedUser.name.$dirty) return errors;
+                !this.$v.editedUser.name.required && errors.push('Name is required');
+                !this.$v.editedUser.name.maxLength && errors.push('Name is too long. Max:50 characters.');
+                !this.$v.editedUser.name.minLength && errors.push('Name is too short. Min:1 characters.');
+                return errors
+            },
+            emailErrors() {
+                const errors = [];
+                if (!this.$v.editedUser.email.$dirty) return errors;
+                !this.$v.editedUser.email.required && errors.push('Email is required.');
+                !this.$v.editedUser.email.email && errors.push('Invalid email given.');
+                return errors
+            },
+            passwordErrors() {
+                const errors = [];
+                if (!this.$v.editedUser.password.$dirty) return errors;
+                !this.$v.editedUser.password.required && errors.push('Password is required');
+                !this.$v.editedUser.password.minLength && errors.push('Password length is too short, min:8 characters.');
+                return errors
+            },
+            passwordConfirmationErrors() {
+                const errors = [];
+                if (!this.$v.editedUser.password_confirmation.$dirty) return errors;
+                !this.$v.editedUser.password_confirmation.required && errors.push('Password confirmation is required');
+                !this.$v.editedUser.password_confirmation.sameAsPassword && errors.push('The password confirmation does not match.');
+                return errors
+            },
+            roleErrors() {
+                const errors = [];
+                if (!this.$v.editedUser.role.$dirty) return errors;
+                !this.$v.editedUser.role.required && errors.push('Role is required');
+                return errors
+            },
         },
         methods: {
             ...mapActions('users', ['updateUsers']),
