@@ -4354,13 +4354,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       _services_auth__WEBPACK_IMPORTED_MODULE_0__["default"].login(this.credentials).then(function (response) {
         _this.$store.dispatch('auth/saveToken', response);
-      })["catch"](function (error) {
-        console.log(error.response);
-      })["finally"](function () {
+
         _this.$router.push({
           name: 'home'
         });
-
+      })["catch"](function (error) {
+        console.log(error.response);
+      })["finally"](function () {
         _this.$store.dispatch('auth/refresh');
       });
     }

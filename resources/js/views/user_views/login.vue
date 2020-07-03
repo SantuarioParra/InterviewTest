@@ -139,11 +139,10 @@
             login() {
                 authService.login(this.credentials).then(response => {
                     this.$store.dispatch('auth/saveToken', response);
-
+                    this.$router.push({name: 'home'});
                 }).catch(error => {
                     console.log(error.response);
                 }).finally(() => {
-                    this.$router.push({name: 'home'});
                     this.$store.dispatch('auth/refresh');
                 });
 
